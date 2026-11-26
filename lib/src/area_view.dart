@@ -6,19 +6,36 @@ import 'package:studio_core/app/game_api.dart';
 import 'package:studio_core/app/services/audio.dart';
 import 'package:studio_core/core/game_rules.dart';
 import 'package:studio_core/core/strings.dart';
+import 'package:studio_core/app/studio_ui.dart';
 
 import 'area_engine.dart';
 import 'area_rules.dart';
 
-class AreaView extends StatefulWidget {
+final Map<StudioLook, ThemeData> _studioThemes = {};
+
+/// Oyun ekranı: düğmeler, çipler, üst bilgi ve pencereler onaylı koyu
+/// tasarımda (merkezin paleti, studio-core StudioLook); tahta çizimi kendi
+/// renklerini korur.
+class AreaView extends StatelessWidget {
   final PlayContext ctx;
   const AreaView({super.key, required this.ctx});
 
   @override
-  State<AreaView> createState() => _AreaViewState();
+  Widget build(BuildContext context) {
+    final look = StudioLook.of(context);
+    return Theme(data: _studioThemes[look] ??= buildStudioTheme(look), child: AreaViewBody(ctx: ctx));
+  }
 }
 
-class _AreaViewState extends State<AreaView> {
+class AreaViewBody extends StatefulWidget {
+  final PlayContext ctx;
+  const AreaViewBody({super.key, required this.ctx});
+
+  @override
+  State<AreaViewBody> createState() => _AreaViewState();
+}
+
+class _AreaViewState extends State<AreaViewBody> {
   late AreaLevel level;
   late AreaGame game;
   ARect? _hint;
